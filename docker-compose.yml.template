@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  {{APP_NAME}}:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: {{APP_NAME}}
+    container_name: {{APP_NAME}}
+    restart: always
+ #   ports: 
+  #    - 3014:3000
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+#    working_dir: /var/www/frontend
+    # volumes:
+    #  - ./node_modules:/var/www/backend/node_modules
+    #  - type: bind
+    #    source: ./yarn.lock
+    #    target: /var/www/backend/yarn.lock
+    networks:
+        - app-network
+    healthcheck:
+       test: curl -sS http://localhost:80 || exit 1
+       interval: 5s
+       timeout: 10s
+       retries: 3
+       start_period: 30s
+
+#Docker Networks
+# docker network create app-network
+networks:
+  app-network:
+    driver: bridge
+    external: true
+#Volumes
+volumes:
+  dbdata:
+    driver: local
